@@ -12,10 +12,31 @@ function divElementHtmlTekst(sporocilo) {
   return $('<div></div>').html('<i>' + sporocilo + '</i>');
 }
 
+function divElementSlika(slika){
+  /*var x = document.createElement("IMG");
+  x.setAttribute("src", slika);
+  x.setAttribute("width", "200");
+  x.setAttribute("height", "200");
+  x.setAttribute("hspace", "20");
+  return x;*/
+  return $('<img />',
+             {
+               src: slika, 
+               width: 200,
+               height: 200,
+             });
+  //http://commons.wikimedia.org/wiki/File:Gy%C3%B6rgy_Ligeti_(1984).jpg
+}
+
+function divElementYoutube(id){
+  return '<iframe src="https://www.youtube.com/embed/'+id+'" allowfullscreen class="margin"  height="150px" width="200px"></iframe>'
+}
+
 function procesirajVnosUporabnika(klepetApp, socket) {
   var sporocilo = $('#poslji-sporocilo').val();
   sporocilo = dodajSmeske(sporocilo);
   var sistemskoSporocilo;
+  //dodajanje slike
 
   if (sporocilo.charAt(0) == '/') {
     sistemskoSporocilo = klepetApp.procesirajUkaz(sporocilo);
@@ -23,10 +44,69 @@ function procesirajVnosUporabnika(klepetApp, socket) {
       $('#sporocila').append(divElementHtmlTekst(sistemskoSporocilo));
     }
   } else {
+    var img;
+    var slika = false;
+    
+    if (sporocilo.indexOf('http:/')>-1) {
+      if (sporocilo.indexOf('.jpg')>-1) {
+        img = sporocilo.substring(sporocilo.indexOf('http:/'),sporocilo.indexOf('.jpg')+4);
+        //$('#sporocila').append(divElementSlika(img));
+        slika = true;
+        //sporocilo = img;
+      } else if (sporocilo.indexOf('.gif')>-1) {
+        img = sporocilo.substring(sporocilo.indexOf('http:/'),sporocilo.indexOf('.gif')+4);
+        //$('#sporocila').append(divElementSlika(img));
+        slika = true;
+        //sporocilo = img;
+      } else if (sporocilo.indexOf('.png')>-1) {
+        img = sporocilo.substring(sporocilo.indexOf('http:/'),sporocilo.indexOf('.png')+4);
+        //$('#sporocila').append(divElementSlika(img));
+        slika = true;
+        //sporocilo = img;
+      } 
+    } else if (sporocilo.indexOf('https:/')>-1){
+      if (sporocilo.indexOf('.jpg')>-1) {
+        img = sporocilo.substring(sporocilo.indexOf('http:/'),sporocilo.indexOf('.jpg')+4);
+        //$('#sporocila').append(divElementSlika(img));
+        slika = true;
+        //sporocilo = img;
+      } else if (sporocilo.indexOf('.gif')>-1) {
+        img = sporocilo.substring(sporocilo.indexOf('http:/'),sporocilo.indexOf('.gif')+4);
+        //$('#sporocila').append(divElementSlika(img));
+        slika = true;
+        //sporocilo = img;commit
+      } else if (sporocilo.indexOf('.png')>-1) {
+        img = sporocilo.substring(sporocilo.indexOf('http:/'),sporocilo.indexOf('.png')+4);
+
+        slika = true;
+        //sporocilo = img;
+      } 
+    }
+    //$('#sporocila').append(divElementSlika(str);
     sporocilo = filtirirajVulgarneBesede(sporocilo);
     klepetApp.posljiSporocilo(trenutniKanal, sporocilo);
     $('#sporocila').append(divElementEnostavniTekst(sporocilo));
     $('#sporocila').scrollTop($('#sporocila').prop('scrollHeight'));
+    if (slika){
+      $('#sporocila').append(divElementSlika(img));
+      klepetApp.posljiSporocilo(trenutniKanal, divElementSlika(img));
+      $('#sporocila').scrollTop($('#sporocila').prop('scrollHeight'));
+    }
+    var offset=0;
+    while (true) {
+      if (offset = sporocilo.indexOf('https://www.youtube.com/watch?v=', offset) > -1) {
+        var x = sporocilo.indexOf('=', offset)+1;
+        var id = sporocilo.substr(x, 11);
+        //alert(id);
+        $('#sporocila').append(divElementYoutube(id));
+        //klepetApp.posljiSporocilo(trenutniKanal, divElementYoutube(id));
+        $('#sporocila').scrollTop($('#sporocila').prop('scrollHeight'));
+        sporocilo = sporocilo.substr(x+11, sporocilo.length-x-11);
+        //alert(sporocilo);
+      }else {
+        break;
+      }
+    }
   }
 
   $('#poslji-sporocilo').val('');
@@ -72,10 +152,28 @@ $(document).ready(function() {
     $('#kanal').text(trenutniVzdevek + " @ " + trenutniKanal);
     $('#sporocila').append(divElementHtmlTekst('Sprememba kanala.'));
   });
-
+//tukaj je prejemnik;
+//-------------------------------------------------------------------------------------------------------------------------------------------
   socket.on('sporocilo', function (sporocilo) {
     var novElement = divElementEnostavniTekst(sporocilo.besedilo);
     $('#sporocila').append(novElement);
+    var spr = sporocilo.besedilo;
+    //youtube append
+    var offset=0;
+    while (true) {
+      if (offset = spr.indexOf('https://www.youtube.com/watch?v=', offset) > -1) {
+        var x = spr.indexOf('=', offset)+1;
+        var id = spr.substr(x, 11);
+        alert(id);
+        $('#sporocila').append(divElementYoutube(id));
+        //klepetApp.posljiSporocilo(trenutniKanal, divElementYoutube(id));
+        $('#sporocila').scrollTop($('#sporocila').prop('scrollHeight'));
+        spr = spr.substr(x+11, spr.length-x-11);
+        //alert(sporocilo);
+      }else {
+        break;
+      }
+    }
   });
   
   socket.on('kanali', function(kanali) {
