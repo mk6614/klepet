@@ -12,6 +12,23 @@ function divElementHtmlTekst(sporocilo) {
   return $('<div></div>').html('<i>' + sporocilo + '</i>');
 }
 
+	function divElementSlika(slika){
+  /*var x = document.createElement("IMG");
+  x.setAttribute("src", slika);
+  x.setAttribute("width", "200");
+  x.setAttribute("height", "200");
+  x.setAttribute("hspace", "20");
+  return x;*/
+  return $('<img />',
+             {
+               src: slika, 
+               width: 200,
+               height: 200,
+               hspace: 20
+             });
+  //http://commons.wikimedia.org/wiki/File:Gy%C3%B6rgy_Ligeti_(1984).jpg
+}
+
 function procesirajVnosUporabnika(klepetApp, socket) {
   var sporocilo = $('#poslji-sporocilo').val();
   sporocilo = dodajSmeske(sporocilo);
@@ -28,7 +45,37 @@ function procesirajVnosUporabnika(klepetApp, socket) {
     $('#sporocila').append(divElementEnostavniTekst(sporocilo));
     $('#sporocila').scrollTop($('#sporocila').prop('scrollHeight'));
   }
-
+  //implementacije slike
+   var img;
+  var spr = sporocilo;
+  var koncnice = ['.jpg', '.png', '.gif'];
+  var zacetnice = ['http:/', 'https:/'];
+  while (spr.indexOf('http')>-1) {
+    //alert('pipi');
+    for (var z=0; z<2; z++){
+      if (spr.indexOf(zacetnice[z])>-1){
+        //alert('pip' + zacetnice[z]);
+        for (var k=0; k<3; k++){
+          if (spr.indexOf(koncnice[k])>-1) {
+            var str1 = spr.substring(spr.indexOf(zacetnice[z]), spr.indexOf(koncnice[k]));
+            //alert(str1);
+            if (str1.indexOf(' ')<0){
+              //alert(koncnice[k] + (spr.indexOf(koncnice[k]))).toString();
+            img = spr.substring(spr.indexOf(zacetnice[z]),spr.indexOf(koncnice[k])+4);
+            //alert(img);
+            $('#sporocila').append(divElementSlika(img));
+            spr = spr.substring(spr.indexOf(koncnice[k])+4, spr.length);
+            }
+            
+          }
+        }
+      } else {
+        break;
+      }
+    }
+  }
+  
+  $('#sporocila').scrollTop($('#sporocila').prop('scrollHeight'));
   $('#poslji-sporocilo').val('');
 }
 
@@ -76,6 +123,80 @@ $(document).ready(function() {
   socket.on('sporocilo', function (sporocilo) {
     var novElement = divElementEnostavniTekst(sporocilo.besedilo);
     $('#sporocila').append(novElement);
+    
+    var img;
+  var spr = sporocilo.besedilo;
+  var koncnice = ['.jpg', '.png', '.gif'];
+  var zacetnice = ['http:/', 'https:/'];
+  while (spr.indexOf('http')>-1) {
+    //alert('pipi');
+    for (var z=0; z<2; z++){
+      if (spr.indexOf(zacetnice[z])>-1){
+        //alert('pip' + zacetnice[z]);
+        for (var k=0; k<3; k++){
+          if (spr.indexOf(koncnice[k])>-1) {
+            var str1 = spr.substring(spr.indexOf(zacetnice[z]), spr.indexOf(koncnice[k]));
+            //alert(str1);
+            if (str1.indexOf(' ')<0){
+              //alert(koncnice[k] + (spr.indexOf(koncnice[k]))).toString();
+            img = spr.substring(spr.indexOf(zacetnice[z]),spr.indexOf(koncnice[k])+4);
+            //alert(img);
+            $('#sporocila').append(divElementSlika(img));
+            spr = spr.substring(spr.indexOf(koncnice[k])+4, spr.length);
+            }
+            
+          }
+        }
+      } else {
+        break;
+      }
+    }
+  }
+    /*if (spr.indexOf('http:/')>-1) {
+      if (spr.indexOf('.jpg')>-1) {
+        img = spr.substring(spr.indexOf('http:/'),spr.indexOf('.jpg')+4);
+        $('#sporocila').append(divElementSlika(img));
+        spr = spr.substring(spr.indexOf('.jpg')+4, spr.length);
+        slika = true;
+        //sporocilo = img;
+      } else if (spr.indexOf('.gif')>-1) {
+        img = spr.substring(spr.indexOf('http:/'),spr.indexOf('.gif')+4);
+        $('#sporocila').append(divElementSlika(img));
+        slika = true;
+        spr = spr.substring(spr.indexOf('.gif')+4, spr.length);
+        //sporocilo = img;
+      } else if (spr.indexOf('.png')>-1) {
+        img = spr.substring(spr.indexOf('http:/'),sr.indexOf('.png')+4);
+        $('#sporocila').append(divElementSlika(img));
+        slika = true;
+        spr = spr.substring(spr.indexOf('.png')+4, spr.length);
+        //sporocilo = img;
+      } 
+    } else if (spr.indexOf('https:/')>-1){
+      if (spr.indexOf('.jpg')>-1) {
+        img = spr.substring(spr.indexOf('http:/'),spr.indexOf('.jpg')+4);
+        $('#sporocila').append(divElementSlika(img));
+        spr = spr.substring(spr.indexOf('.jpg')+4, spr.length);
+        slika = true;
+        //sporocilo = img;
+      } else if (spr.indexOf('.gif')>-1) {
+        img = spr.substring(spr.indexOf('http:/'),spr.indexOf('.gif')+4);
+        $('#sporocila').append(divElementSlika(img));
+        slika = true;
+        spr = spr.substring(spr.indexOf('.gif')+4, spr.length);
+        //sporocilo = img;commit
+      } else if (spr.indexOf('.png')>-1) {
+        img = spr.substring(spr.indexOf('http:/'),spr.indexOf('.png')+4);
+        spr = spr.substring(spr.indexOf('.png')+4, spr.length);
+        slika = true;
+        $('#sporocila').append(divElementSlika(img));
+        //sporocilo = img;
+      } 
+    } else {
+      break;
+    }
+  }*/
+    $('#sporocila').scrollTop($('#sporocila').prop('scrollHeight'));
   });
   
   socket.on('kanali', function(kanali) {
