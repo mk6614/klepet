@@ -12,21 +12,7 @@ function divElementHtmlTekst(sporocilo) {
   return $('<div></div>').html('<i>' + sporocilo + '</i>');
 }
 
-function divElementSlika(slika){
-  /*var x = document.createElement("IMG");
-  x.setAttribute("src", slika);
-  x.setAttribute("width", "200");
-  x.setAttribute("height", "200");
-  x.setAttribute("hspace", "20");
-  return x;*/
-  return $('<img />',
-             {
-               src: slika, 
-               width: 200,
-               height: 200,
-             });
-  //http://commons.wikimedia.org/wiki/File:Gy%C3%B6rgy_Ligeti_(1984).jpg
-}
+
 
 function divElementYoutube(id){
   return '<iframe src="https://www.youtube.com/embed/'+id+'" allowfullscreen class="margin"  height="150px" width="200px"></iframe>'
@@ -43,53 +29,15 @@ function procesirajVnosUporabnika(klepetApp, socket) {
     if (sistemskoSporocilo) {
       $('#sporocila').append(divElementHtmlTekst(sistemskoSporocilo));
     }
-  } else {
-    var img;
-    var slika = false;
-    
-    if (sporocilo.indexOf('http:/')>-1) {
-      if (sporocilo.indexOf('.jpg')>-1) {
-        img = sporocilo.substring(sporocilo.indexOf('http:/'),sporocilo.indexOf('.jpg')+4);
-        //$('#sporocila').append(divElementSlika(img));
-        slika = true;
-        //sporocilo = img;
-      } else if (sporocilo.indexOf('.gif')>-1) {
-        img = sporocilo.substring(sporocilo.indexOf('http:/'),sporocilo.indexOf('.gif')+4);
-        //$('#sporocila').append(divElementSlika(img));
-        slika = true;
-        //sporocilo = img;
-      } else if (sporocilo.indexOf('.png')>-1) {
-        img = sporocilo.substring(sporocilo.indexOf('http:/'),sporocilo.indexOf('.png')+4);
-        //$('#sporocila').append(divElementSlika(img));
-        slika = true;
-        //sporocilo = img;
-      } 
-    } else if (sporocilo.indexOf('https:/')>-1){
-      if (sporocilo.indexOf('.jpg')>-1) {
-        img = sporocilo.substring(sporocilo.indexOf('http:/'),sporocilo.indexOf('.jpg')+4);
-        //$('#sporocila').append(divElementSlika(img));
-        slika = true;
-        //sporocilo = img;
-      } else if (sporocilo.indexOf('.gif')>-1) {
-        img = sporocilo.substring(sporocilo.indexOf('http:/'),sporocilo.indexOf('.gif')+4);
-        //$('#sporocila').append(divElementSlika(img));
-        slika = true;
-        //sporocilo = img;commit
-      } else if (sporocilo.indexOf('.png')>-1) {
-        img = sporocilo.substring(sporocilo.indexOf('http:/'),sporocilo.indexOf('.png')+4);
-
-        slika = true;
-        //sporocilo = img;
-      } 
-    }
+  }
     //$('#sporocila').append(divElementSlika(str);
     sporocilo = filtirirajVulgarneBesede(sporocilo);
     klepetApp.posljiSporocilo(trenutniKanal, sporocilo);
     $('#sporocila').append(divElementEnostavniTekst(sporocilo));
     $('#sporocila').scrollTop($('#sporocila').prop('scrollHeight'));
     if (slika){
-      $('#sporocila').append(divElementSlika(img));
-      klepetApp.posljiSporocilo(trenutniKanal, divElementSlika(img));
+      //$('#sporocila').append(divElementSlika(img));
+     // klepetApp.posljiSporocilo(trenutniKanal, divElementSlika(img));
       $('#sporocila').scrollTop($('#sporocila').prop('scrollHeight'));
     }
     var offset=0;
