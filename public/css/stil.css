@@ -69,3 +69,7 @@ a {
 #pomoc {
   font: 10px "Lucida Grande", Helvetica, Arial, sans-serif;
 }
+ 
+.margin {
+  margin-left: 20px;
+}
