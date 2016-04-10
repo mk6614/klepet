@@ -253,6 +253,17 @@ $(document).ready(function() {
     return false;
   });
   
+  socket.on('dregljaj', function(dregljaj) {
+    //alert('dregljaj dobljen');
+    if (dregljaj.dregljaj){
+      $('#vsebina').jrumble();
+      $('#vsebina').trigger('startRumble');
+      setTimeout(function() {
+        $('#vsebina').trigger('stopRumble');
+      }, 1500);
+    }
+  });
+  
   
 });
 
