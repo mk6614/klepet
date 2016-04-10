@@ -35,11 +35,6 @@ function procesirajVnosUporabnika(klepetApp, socket) {
     klepetApp.posljiSporocilo(trenutniKanal, sporocilo);
     $('#sporocila').append(divElementEnostavniTekst(sporocilo));
     $('#sporocila').scrollTop($('#sporocila').prop('scrollHeight'));
-    if (slika){
-      //$('#sporocila').append(divElementSlika(img));
-     // klepetApp.posljiSporocilo(trenutniKanal, divElementSlika(img));
-      $('#sporocila').scrollTop($('#sporocila').prop('scrollHeight'));
-    }
     var offset=0;
     while (true) {
       if (offset = sporocilo.indexOf('https://www.youtube.com/watch?v=', offset) > -1) {
@@ -55,8 +50,8 @@ function procesirajVnosUporabnika(klepetApp, socket) {
         break;
       }
     }
-  }
-
+  
+  $('#sporocila').scrollTop($('#sporocila').prop('scrollHeight'));
   $('#poslji-sporocilo').val('');
 }
 
@@ -105,23 +100,24 @@ $(document).ready(function() {
   socket.on('sporocilo', function (sporocilo) {
     var novElement = divElementEnostavniTekst(sporocilo.besedilo);
     $('#sporocila').append(novElement);
-    var spr = sporocilo.besedilo;
+    var spro = sporocilo.besedilo;
     //youtube append
     var offset=0;
     while (true) {
-      if (offset = spr.indexOf('https://www.youtube.com/watch?v=', offset) > -1) {
-        var x = spr.indexOf('=', offset)+1;
-        var id = spr.substr(x, 11);
-        alert(id);
+      if (offset = spro.indexOf('https://www.youtube.com/watch?v=', offset) > -1) {
+        var x = spro.indexOf('=', offset)+1;
+        var id = spro.substr(x, 11);
+        //alert(id);
         $('#sporocila').append(divElementYoutube(id));
         //klepetApp.posljiSporocilo(trenutniKanal, divElementYoutube(id));
         $('#sporocila').scrollTop($('#sporocila').prop('scrollHeight'));
-        spr = spr.substr(x+11, spr.length-x-11);
+        spro = spro.substring(x+11, spro.length -1);
         //alert(sporocilo);
       }else {
         break;
       }
     }
+    $('#sporocila').scrollTop($('#sporocila').prop('scrollHeight'));
   });
   
   socket.on('kanali', function(kanali) {
